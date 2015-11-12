@@ -1,21 +1,63 @@
-# ===========
+# ==========================
 # default settings for all
-# ===========
+# ==========================
+
+# Galois/Counter Mode (GCM) - efficient operational mode for symmetric key cryptographic block ciphers
+# Cipher Block Chaining (CBC) - replaced by GCM
+
 Host *
         LogLevel quiet
         Protocol 2
-        Ciphers blowfish-cbc,arfour128,aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,cast128-cbc,aes192-cbc,aes256-cbc,arcfour
-#       ControlPath ~/.ssh/%l-master-%r@%h:%p
-#       ControlMaster auto
-#       ssh -Mnf bastion sleep 30d
+        HostKey /etc/ssh/ssh_host_ed25519_key
+        HostKey /etc/ssh/ssh_host_rsa_key
+#        Ciphers blowfish-cbc,arfour128,aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,cast128-cbc,aes192-cbc,aes256-cbc,arcfour
+#if enabling DH gex open /ec/ssh/moduli and delete lines where 5th col < 2000
+# awk '$5 > 2000' /etc/ssh/moduli
+        KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+        Ciphers chacha20-poly1305,aes256-gcm,aes128-gcm,aes256-ctr
+        MACs hmac-sha2-512-etm,hmac-sha2-256-etm,hmac-ripemd160-etm,umac-128-etm,hmac-sha2-512
         ForwardAgent no
         ForwardX11 no
+        PermitLocalCommand no
         ForwardX11Trusted yes
-        Port 22
-
         ServerAliveInterval 60
-#       ServerAliveCountMax 10
 
-# ===========
+#       ServerAliveCountMax 10
+#connection sharing for 60 seconds, for speedup
+#       ControlMaster auto
+#       ControlPath ~/.ssh/conn-%n
+#       ControlPath ~/.ssh/%l-master-%r@%h:%p
+#       ControlPersist 60s
+#       ControlMaster auto
+#       ssh -Mnf bastion sleep 30d
+
+# =====================
 # settings per host
-# ===========
+# =====================
+
+# See https://help.github.com/articles/using-ssh-over-the-https-port
+Host gist.github.com *.gist.github.com
+        Hostname gist.github.com
+
+Host ssh.github.com *.ssh.github.com 443.github.com *.443.github.com
+        Hostname ssh.github.com
+        Port 443
+# This rule must stay below more specific host rules to avoid
+# "Hostname" to be set to github.com
+
+Host *.github.com
+        Hostname github.com
+
+Host github.com gist.github.com ssh.github.com 443.github.com *.github.com *.gist.github.com *.ssh.github.com *.443.github.com
+        User git
+        Protocol 2
+        # Enforce host checks
+        StrictHostKeyChecking yes
+        UserKnownHostsFile ${known_hosts_file}
+        # Hosts added later (identified by IP) will be hashed
+        HashKnownHosts yes
+        VerifyHostKeyDNS no
+        # Enable only the required authentication
+        PubkeyAuthentication yes
+        PreferredAuthentications publickey
+        KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256,diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1
