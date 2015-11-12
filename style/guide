@@ -1,0 +1,10 @@
+#
+#VERSION = 01.001.0001
+#          ^^ ^^^ ^^^^
+#          || ------------ major
+#             ||| -------- minor
+#                 |||| --- build
+#
+#BRANCH = master
+#       = maiden
+#
