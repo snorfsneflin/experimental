@@ -1,0 +1,5 @@
+#58 google supported languages
+#creates mp3 file containing query in spoken language
+#limit of 100 characters for the "q" parameter
+#the "tl" parameter is target language.
+wget -q -U Mozilla -O output.mp3 "http://translate.google.com/translate_tts?ie=UTF-8&tl=en&q=hello+world
