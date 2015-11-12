@@ -1,0 +1,21 @@
+# ===========
+# default settings for all
+# ===========
+Host *
+        LogLevel quiet
+        Protocol 2
+        Ciphers blowfish-cbc,arfour128,aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,cast128-cbc,aes192-cbc,aes256-cbc,arcfour
+#       ControlPath ~/.ssh/%l-master-%r@%h:%p
+#       ControlMaster auto
+#       ssh -Mnf bastion sleep 30d
+        ForwardAgent no
+        ForwardX11 no
+        ForwardX11Trusted yes
+        Port 22
+
+        ServerAliveInterval 60
+#       ServerAliveCountMax 10
+
+# ===========
+# settings per host
+# ===========
