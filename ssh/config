@@ -4,15 +4,17 @@
 
 # Galois/Counter Mode (GCM) - efficient operational mode for symmetric key cryptographic block ciphers
 # Cipher Block Chaining (CBC) - replaced by GCM
+#        Ciphers blowfish-cbc,arfour128,aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,cast128-cbc,aes192-cbc,aes256-cbc,arcfour
 
 Host *
         LogLevel quiet
         Protocol 2
+        PubkeyAuthentication yes
+        HostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com,ssh-rsa-cert-v01@openssh.com,ssh-ed25519,ssh-rsa
         HostKey /etc/ssh/ssh_host_ed25519_key
         HostKey /etc/ssh/ssh_host_rsa_key
-#        Ciphers blowfish-cbc,arfour128,aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,cast128-cbc,aes192-cbc,aes256-cbc,arcfour
-#if enabling DH gex open /ec/ssh/moduli and delete lines where 5th col < 2000
-# awk '$5 > 2000' /etc/ssh/moduli
+#after enabling DH gex open /ec/ssh/moduli and delete lines where 5th col < 2000
+#awk '$5 > 2000' /etc/ssh/moduli
         KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
         Ciphers chacha20-poly1305,aes256-gcm,aes128-gcm,aes256-ctr
         MACs hmac-sha2-512-etm,hmac-sha2-256-etm,hmac-ripemd160-etm,umac-128-etm,hmac-sha2-512
@@ -21,7 +23,10 @@ Host *
         PermitLocalCommand no
         ForwardX11Trusted yes
         ServerAliveInterval 60
-
+        
+        PasswordAuthentication no
+        ChallengeResponseAuthentication no
+        
 #       ServerAliveCountMax 10
 #connection sharing for 60 seconds, for speedup
 #       ControlMaster auto
