@@ -1,4 +1,30 @@
 
+echo 'these applications are using ipv6'
+
+#disable ipv6 on linux
+if [ "$(cat /proc/sys/net/ipv6/conf/all/disable_ipv6)" -eq '0' ]; then
+  echo 'net.ipv6.conf.all.disable_ipv6=1' >> /etc/sysctl.conf
+  echo 'net.ipv6.conf.default.disable_ipv6=1' >> /etc/sysctl.conf
+  echo 'net.ipv6.conf.lo.disable_ipv6=1' >> /etc/sysctl.conf
+  sysctl -p
+fi
+
+#disable ipv6 usage in ssh
+if [ -f /etc/default/ssh ]; then
+echo 'disable ipv6 from being used in ssh - comment out and restart sshd to enable'
+echo 'SSHD_OPTS="-4"' >> /etc/default/ssh
+fi
+
+if [ -f /etc/avahi/avahi-daemon.conf ]; then
+echo 'disable ipv6 from being used by avahi'
+sed -n 's/use-ipv6=yes/use-ipv6=no' /etc/avahi/avahi-daemon.conf
+fi
+
+#disable ipv6 in java
+#/etc/java-7-openjdk/net.properties
+#http.nonProxyHosts=localhost|127.*
+#ftp.nonProxyHosts=localhost|127.*
+
 # generate new ssh keys
 if [ -d ${HOME}/.ssh ];
   then
