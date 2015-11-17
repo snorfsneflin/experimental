@@ -58,7 +58,7 @@ fi
 #clean up existing keys, then roll new ones
 if [ -d /etc/ssh ];
   then
-    rm /etc/ssh/ssh_host_*key*
+    rm -f /etc/ssh/ssh_host_*
     cd /etc/ssh && ssh-keygen -t ed25519 -f ssh_host_ed25519_key < /dev/null 
     cd /etc/ssh && ssh-keygen -t rsa -b 4096 -f ssh_host_rsa_key < /dev/null
   else
@@ -82,7 +82,7 @@ if [ -f /etc/ssh/moduli ];
     ssh-keygen -T /etc/ssh/moduli.safe -f /etc/ssh/moduli.all
     echo '...'
     mv /etc/ssh/moduli.safe /etc/ssh/moduli
-    rm /etc/ssh/moduli.all
+    rm -f /etc/ssh/moduli.all
     echo
     echo 'moduli file built'
 fi
