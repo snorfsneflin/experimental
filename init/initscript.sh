@@ -15,10 +15,14 @@ echo 'disable ipv6 from being used in ssh - comment out and restart sshd to enab
 echo 'SSHD_OPTS="-4"' >> /etc/default/ssh
 fi
 
+#disable ipv6 in avahi
 if [ -f /etc/avahi/avahi-daemon.conf ]; then
 echo 'disable ipv6 from being used by avahi'
 sed -n 's/use-ipv6=yes/use-ipv6=no' /etc/avahi/avahi-daemon.conf
 fi
+
+#disable ipv6 on dhclient for dhcp requests
+#/etc/dhcp/dhclient.conf
 
 #disable ipv6 in java
 #/etc/java-7-openjdk/net.properties
