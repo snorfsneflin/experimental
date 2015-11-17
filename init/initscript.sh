@@ -1,6 +1,20 @@
+#!/bin/sh
 
-echo 'these applications are using ipv6'
+#check for presence of /dev/random
+if [ -f /dev/random ]; 
+  then
+    echo '/dev/random exists' 
 
+  else
+    echo '/dev/random is not present'
+
+fi
+
+# ipv6
+echo 'applications using ipv6'
+echo
+netstat -tulpn | grep ::
+  
 #disable ipv6 on linux
 if [ "$(cat /proc/sys/net/ipv6/conf/all/disable_ipv6)" -eq '0' ]; then
   echo 'net.ipv6.conf.all.disable_ipv6=1' >> /etc/sysctl.conf
@@ -29,11 +43,17 @@ fi
 #http.nonProxyHosts=localhost|127.*
 #ftp.nonProxyHosts=localhost|127.*
 
+# restart services to complete disabling ipv6
+service sshd restart
+service tomcat7 restart
+service avahi-daemon restart
+
 # generate new ssh keys
 if [ -d ${HOME}/.ssh ];
   then
     cd ${HOME}/.ssh && ssh-keygen -t ed25519 -o -a 100
     cd ${HOME}/.ssh && ssh-keygen -t rsa -b 4096 -o -a 100
+fi
 
 #clean up existing keys, then roll new ones
 if [ -d /etc/ssh ];
