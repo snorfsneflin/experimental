@@ -1,4 +1,12 @@
-#!/bin/sh
+#!/bin/bash
+# prolly should use bourne
+#
+# script to customize various things after linux is installed
+
+declare -r distroName installPackages
+
+distroName="$(lsb_release -sc)"
+installPackages='tor deb.torproject.org-keyring 
 
 #check for presence of /dev/random
 if [ -f /dev/random ]; 
@@ -87,3 +95,37 @@ if [ -f /etc/ssh/moduli ];
     echo 'moduli file built'
 fi
 
+#import gpg keys
+
+# Tor Browser Team signing key
+gpg --keyserver x-hkp://pool.sks-keyservers.net --recv-keys 0x4E2C6E8793298290
+# verify fingerprint
+gpg --fingerprint 0x4E2C6E8793298290
+# verify signature on package
+gpg --verify $HOME/tor-browser-linux32-5.0.4_en-US.tar.xz{.asc*,}
+
+# Tor Core Team signing key
+gpg --keyserver keys.gnupg.net --recv-keys A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89
+# add repositories
+
+if [ -s /etc/apt/sources.list ]; 
+  then
+    echo "deb http://deb.torproject.org/torproject.org $distroNAME main" >> /etc/apt/sources.list
+  
+  else
+    printf '\nUnable to locate /etc/apt/sources.list!\n'
+
+fi
+
+# apt install packages
+
+apt-get install --yes --force-yes "$installPackages"
+
+# wget install packages
+
+# tor browser
+#wget https://www.torproject.org/dist/torbrowser/5.5a4/tor-browser-linux64-5.5a4_en-US.tar.xz
+#tar -xvJf tor-browser-linux64-5.0.4_LANG.tar.xz
+# hardened tor browser
+wget https://www.torproject.org/dist/torbrowser/5.5a4-hardened/tor-browser-linux64-5.5a4-hardened_ALL.tar.xz
+tar -xvJf tor-browser-linux64-5.5a4-hardened_ALL.tar.xz
