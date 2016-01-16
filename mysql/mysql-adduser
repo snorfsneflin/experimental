@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# needs a lot of work
+
+# check the number of arguments
+[[ $# -le 2 ]] && { echo "Usage: $0 'DB_Name' 'DB_USER' 'DB_PASSORD' ['remote1|remote2|remoteN'] ['DB_RIGHTS']"; exit 1; }
+
+mysql_db="$1"
+mysql_user="$2"
+mysql_pass="$3"
+mysql_dbremotehost="$4"
+mysql_grants="$5"
+
+#path to mysql binary
+mysql_bin='/usr/bin/mysql'
+
+#todo: check for a file containing this
+#mysql root user credentials
+mysql_admin='root'
+mysql_adminpass='MySQL-PassWord'
+mysql_host='localhost'
+ 
+
+#fallback to ALL rights 
+[[ -z "${_dbrights}" ]] && _dbrights="ALL"
+ 
+#build queries 
+_uamq="${mysql} -p${_madminpwd} -u ${_madminuser} -h ${_mhost} -e CREATE DATABASE ${_db};"
+_upermq1="${mysql} -p${_madminpwd} -u ${_madminuser} -h ${_mhost} -e GRANT ${_dbrights} ON ${_db}.* TO ${_user}@localhost IDENTIFIED BY ${_pass};"
+
+# run mysql queries
+"$_uamq"
+"$_upermq1"
+
+# read remote host ip in a bash loop
+# build query to grant permissions for the same username from remote hosts/ip
+IFS='|'
+for  i in ${_dbremotehost}
+do
+	_upermq2="${mysql} -u "${_madminuser}" -h "${_mhost}" -p'${_madminpwd}' -e \"GRANT ${_dbrights} ON ${_db}.* TO ${_user}@${i} IDENTIFIED BY '${_pass}';\""
+	$_upermq2
+done
+
+exit 0
