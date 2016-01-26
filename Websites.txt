@@ -1,0 +1,13 @@
+
+Unixersal Translator - what commands to use to achieve a specified result
+http://bhami.com/rosetta.html
+
+A guide to unix shell quoting
+http://resources.mpi-inf.mpg.de/departments/rg1/teaching/unixffb-ss98/quoting-guide.html
+
+
+Managing Ports in BSD
+http://lupomontero.com/managing-ports-in-freebsd/
+
+lintsh - helps build portable scripts
+http://code.dogmap.org/lintsh/
